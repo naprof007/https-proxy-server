@@ -13,6 +13,7 @@ const localPort = process.env.LOCAL_PORT || 443
 const remoteHost = process.env.REMOTE_HOST || 'localhost'
 const remoteProtocol = process.env.REMOTE_PROTOCOL || 'https'
 const remotePort = process.env.REMOTE_PORT || 443
+const remoteSecurity = process.env.REMOTE_SECURITY == 'true'
 
 console.log(remoteHost)
 
@@ -31,6 +32,7 @@ app.use((req, res) => {
     // Проксирование запросов на целевой сервер
     proxy.web(req, res, {
         target: targetServer,
+        secure: remoteSecurity,
         headers: {
             Host: remoteHost,
         }
