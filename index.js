@@ -4,6 +4,7 @@ const http = require('http');
 const https = require('https');
 const httpProxy = require('http-proxy');
 const fs = require('fs');
+var cors = require('cors')
 
 const app = express();
 const proxy = httpProxy.createProxyServer();
@@ -16,9 +17,14 @@ const remoteUseHttps = process.env.REMOTE_USE_HTTPS === 'true'
 const remoteHost = process.env.REMOTE_HOST || 'localhost'
 const remotePort = process.env.REMOTE_PORT || 443
 const remoteSecurity = process.env.REMOTE_SECURITY === 'true'
+const useCors = process.env.USE_CORS === 'true'
 
 const localServer = `${localUseHttps ? 'https' : 'http'}://${localHost}:${localPort}`;
 const targetServer = `${remoteUseHttps ? 'https' : 'http'}://${remoteHost}:${remotePort}`;
+
+if (useCors) {
+    app.use(cors())
+}
 
 // Загрузка SSL-сертификата и ключа
 const privateKey = fs.readFileSync('cert/key.pem', 'utf8');
