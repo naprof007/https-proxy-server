@@ -17,13 +17,19 @@ const remoteUseHttps = process.env.REMOTE_USE_HTTPS === 'true'
 const remoteHost = process.env.REMOTE_HOST || 'localhost'
 const remotePort = process.env.REMOTE_PORT || 443
 const remoteSecurity = process.env.REMOTE_SECURITY === 'true'
+
 const useCors = process.env.USE_CORS === 'true'
+const corsOrigin = process.env.CORS_ORIGIN || ''
+const corsAllowCredentials = process.env.CORS_ALLOW_CREDENTIALS === 'true'
 
 const localServer = `${localUseHttps ? 'https' : 'http'}://${localHost}:${localPort}`;
 const targetServer = `${remoteUseHttps ? 'https' : 'http'}://${remoteHost}:${remotePort}`;
 
 if (useCors) {
-    app.use(cors())
+    app.use(cors({
+        origin: corsOrigin,
+        credentials: corsAllowCredentials,
+    }))
 }
 
 // Загрузка SSL-сертификата и ключа
