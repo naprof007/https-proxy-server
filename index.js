@@ -5,6 +5,7 @@ const https = require('https');
 const httpProxy = require('http-proxy');
 const fs = require('fs');
 var cors = require('cors')
+const { createProxyMiddleware } = require('http-proxy-middleware')
 
 const app = express();
 const proxy = httpProxy.createProxyServer();
@@ -41,6 +42,13 @@ const credentials = {
     passphrase: '1234',
 };
 
+const wsProxy = createProxyMiddleware({
+    target: `ws://${remoteHost}:${remotePort}`,
+    changeOrigin: false,
+    secure: false,
+    ws: true,
+});
+
 app.use((req, res) => {
     // Проксирование запросов на целевой сервер
     proxy.web(req, res, {
@@ -60,6 +68,7 @@ proxy.on('error', (err, req, res) => {
 
 // Создание сервера HTTPS или HTTP
 const httpsServer = (localUseHttps ? https : http).createServer(credentials, app);
+httpsServer.on("upgrade", wsProxy.upgrade)
 
 // Запуск сервера
 httpsServer.listen(localPort, localHost, () => {
