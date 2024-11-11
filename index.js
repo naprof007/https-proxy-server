@@ -40,14 +40,15 @@ const credentials = {
     key: privateKey,
     cert: certificate,
     passphrase: '1234',
-};
+}
 
 const wsProxy = createProxyMiddleware({
     target: `ws://${remoteHost}:${remotePort}`,
-    changeOrigin: false,
-    secure: false,
+    changeOrigin: true,
+    secure: remoteUseHttps,
     ws: true,
-});
+})
+app.use(wsProxy)
 
 app.use((req, res) => {
     // Проксирование запросов на целевой сервер
